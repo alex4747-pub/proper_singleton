@@ -47,11 +47,36 @@ for initialization.
    concrete driver is already instantiated to support unit testing.
 
 4. The proper singleton is unit-test friendly:
-..* If production singletons are written
+* If production singletons are written
     in unit-test friendly manner (would not instantiate self if another concrete
     singleton is already instantiated) then all it takes to add mock singleton
     is to link it in with negative initialization level.
-..* Reset operation provides simple way to integrate mock daemons with setup/test/teardown
+* Reset operation provides simple way to integrate mock daemons with setup/test/teardown
     pattern of traditional unit tests
-..* Configuration map provides a convenient way to select a proper mock singleton for
+* Configuration map provides a convenient way to select a proper mock singleton for
     a specific test and to modify a mock singleton behavior on per-test basis.
+
+# Example
+
+## Base example
+
+The example consists of two chipset drivers 'a' and 'b' implemented as singletons and
+a network driver that uses instantiated singleton send packet.
+
+A specific singleton is installed depending on the presence of the chipset hardware.
+The chipset-b-driver supports reset operation.
+
+## Unit Test
+
+It is expected that gtest environment is installed.
+
+The example/unit-test contains as simple unit test with mock-chipset-driver implemented
+as a singleton with negative initialization level, so it will be instantiated instead of
+real drivers.
+
+## Extended Unit Test
+
+It is expected that gtest environment is installed.
+
+The example/unit-test contains two unit case sets each one is using different mock-chipset-driver,
+the specific mock-chipset-driver is selected by the configuration map.
