@@ -54,7 +54,7 @@ cpplint: $(SRCS) $(INCS) Makefile
 simple_init_chain.h:
 	rm -rf simple_init_chain
 	git clone https://github.com/alex4747-pub/simple_init_chain.git
-	cp simple_init_chain/include/simple_init_chain.h .
+	cp simple_init_chain/simple_init_chain.h .
 	rm -rf simple_init_chain
 
 clean:
