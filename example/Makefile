@@ -53,12 +53,14 @@ cpplint: $(SRCS) $(INCS) Makefile
 # We need a local copy of simiple_init_chain.h
 simple_init_chain.h:
 	rm -rf simple_init_chain
-	git clone https://github.com/alex4747-pub/simple_init_chain.git
+	git -c advice.detachedHead=false clone -b v1.0 https://github.com/alex4747-pub/simple_init_chain.git
 	cp simple_init_chain/simple_init_chain.h .
 	rm -rf simple_init_chain
 
 clean:
 	rm -rf linecard *~ *.dSYM simple_init_chain.h simple_init_chain
+	cd unit_test; $(MAKE) clean
+	cd ex_unit_test; $(MAKE) clean
 
 run: linecard
 	./linecard
