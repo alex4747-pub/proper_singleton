@@ -20,7 +20,7 @@ versus the proper-singleton (PS):
 |Run-time concrete singleton selection | N    | (*)  | N    | N    | Y   |
 |Unit-test friendliness                | N    | N    | N    | N    | Y   |
 
-(*) - it is possible but it will require creation of custom singleton registry
+(*) - it is possible but it will require creation of a custom singleton registry
 
 The proper singleton has no problems and supports all the desired features
 by starting from the classic singleton and utilizing properties of
@@ -33,14 +33,14 @@ for initialization.
 
 2. The layered initialization is supported by per-component initialization level.
 
-3. Abstract singleton support and run-time concrete singleton selection is trivially
+3. Abstract singleton support and run-time concrete singleton selection are trivially
    implemented: each concrete singleton skips initialization if another concrete
    singleton is already installed, each concrete singleton makes the decision
-   whether to instantiate save from either checking local environment or by reading
+   whether to instantiate self from either checking local environment or by reading
    config map.
 
    For example if we have a network line-card with two chipsets A and B with
-   two drivers driver-A and driver-B implemented as single tons linked into
+   two drivers driver-A and driver-B implemented as singletons linked into
    the line-card image. The initialization routine for the driver-A checks presence
    of chipset A and instantiates self if the chipset is present. The driver-B
    behaves the same way. Both these drivers would no instantiate if another
@@ -52,7 +52,7 @@ for initialization.
     singleton is already instantiated) then all it takes to add mock singleton
     is to link it in with negative initialization level.
 * Reset operation provides simple way to integrate mock daemons with setup/test/teardown
-    pattern of traditional unit tests
+    pattern of traditional unit tests.
 * Configuration map provides a convenient way to select a proper mock singleton for
     a specific test and to modify a mock singleton behavior on per-test basis.
 
