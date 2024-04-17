@@ -1,0 +1,11 @@
+Example of the proper singleton for
+unit testing.
+
+1. We test the network driver.
+2. We link in the mock chipset driver with low
+   level number so it get instantiated.
+3. We configure the behavior of the mock
+   chipset driver (aka outcome).
+4. A mock chipset driver instance is created
+   in SetUp and destroyed in TearDown.
+   

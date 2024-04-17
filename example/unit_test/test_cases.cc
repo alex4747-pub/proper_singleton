@@ -24,18 +24,33 @@
 #include <mock_chipset_driver.h>
 #include <network_driver.h>
 
+
 class NetworkDriverTest : public ::testing::Test {
  protected:
+
+  class TestRunner : public simple::InitChain::Runner {
+   public:
+    bool Run() noexcept { return DoRun(); }
+    bool Reset() noexcept { return DoReset(); }
+    bool Release() noexcept { return DoRelease(); }
+  };
+
   void SetUp() override {
     // Run init chain
-    bool res = simple::InitChain::Run();
+    bool res = runner_.Run();
     EXPECT_TRUE(res);
 
-    // Make sure expected mock is instantiated
+    // Demonstrate that mock chipset driveer
+    // is instantiated
+    //
     auto mcd = dynamic_cast<MockChipsetDriver*>(
         &example::ChipsetDriver::GetInstance());
     EXPECT_TRUE(mcd);
 
+    // Demonstrate that it was create from
+    // because it has default outcome value
+    EXPECT_TRUE(mcd->GetOutcome());
+    
     nd_ = new example::NetworkDriver;
   }
 
@@ -43,25 +58,40 @@ class NetworkDriverTest : public ::testing::Test {
     delete nd_;
     nd_ = 0;
 
-    simple::InitChain::Reset();
+    bool res = runner_.Reset();
+    EXPECT_TRUE(res);
   }
 
+  TestRunner runner_;
   example::NetworkDriver* nd_;
 };
 
 TEST_F(NetworkDriverTest, SendPackerPos) {
   // Positive test of send packet
+  auto mcd =
+      dynamic_cast<MockChipsetDriver*>(&example::ChipsetDriver::GetInstance());
+  EXPECT_TRUE(mcd);
+
+  EXPECT_TRUE(mcd->GetOutcome());
+
   bool res = nd_->Transmit(reinterpret_cast<uint8_t const*>("test-data"), 9);
   EXPECT_TRUE(res);
+
+  // Set non-default outcome value to demonstrate
+  // destruction and recreation of mock chipset
+  // driver instance
+  //
+  mcd->SetOutcome(false);
 }
 
 TEST_F(NetworkDriverTest, SendPackerNeg) {
   // Negative test of send packet
 
-  // Prepare mock chipset driver
   auto mcd =
       dynamic_cast<MockChipsetDriver*>(&example::ChipsetDriver::GetInstance());
   EXPECT_TRUE(mcd);
+
+  EXPECT_TRUE(mcd->GetOutcome());
 
   mcd->SetOutcome(false);
 

@@ -20,7 +20,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#include <InitChain.h>
 #include <gtest/gtest.h>
+
+// Static permssions
+bool simple::InitChain::AllowReset() { return true; }
 
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);

@@ -21,8 +21,10 @@
 //
 
 #include <chipset_driver.h>
-#include <simple_init_chain.h>
+#include <InitChain.h>
 #include <iostream>
+#include <map>
+#include <string>
 
 // This is a concrete driver for chipset-a
 // Note: there is no need to have these definitions
@@ -38,12 +40,13 @@ class ChipsetADriver : public example::ChipsetDriver {
   ChipsetADriver();
   virtual ~ChipsetADriver();
   static bool IsChipsetPresent();
-  static bool DoInit(int level, simple::InitChain::ConfigMap const& configMap);
 
-  static simple::InitChain::El init_el_;
+  static bool InitFunc();
+  static simple::InitChain::Link init_worker_;
 };
 
-simple::InitChain::El ChipsetADriver::init_el_(100, DoInit);
+
+simple::InitChain::Link ChipsetADriver::init_worker_(100, InitFunc);
 
 bool ChipsetADriver::SendPacket(uint8_t const*, size_t) {
   // It should not happen - in our example we simulate presense of chipset-b
@@ -70,22 +73,18 @@ bool ChipsetADriver::IsChipsetPresent() {
   return false;
 }
 
-bool ChipsetADriver::DoInit(int, simple::InitChain::ConfigMap const&) {
-  std::cout << "ChipsetADrvier::DoInit called\n";
-
+bool ChipsetADriver::InitFunc() {
   if (InstantiationDone()) {
-    std::cout << "ChipsetADrvier::DoInit already instantiated\n";
+    std::cout << "ChipsetADrvier::InitFunc: already instantiated\n";
     return true;
   }
-
   if (!IsChipsetPresent()) {
-    std::cout << "ChipsetADrvier::DoInit chipset not-present\n";
+    std::cout << "ChipsetADrvier::InitFunc: chipset not-present\n";
     return true;
   }
 
-  std::cout << "ChipsetADrvier::DoInit instantiation\n";
+  std::cout << "ChipsetADrvier::IntiFunc: instantiation\n";
   new ChipsetADriver;
   return true;
 }
-
 }  // namespace chipset_a

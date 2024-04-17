@@ -26,20 +26,24 @@
 #define INCLUDE_MOCK_CHIPSET_DRIVER_H_
 
 #include <chipset_driver.h>
-#include <simple_init_chain.h>
+#include <InitChain.h>
+#include <map>
+#include <string>
 
 class MockChipsetDriver : public example::ChipsetDriver {
  public:
   bool SendPacket(uint8_t const* data, size_t data_len) override;
 
   // Testing support manipulate test outcome
+  bool GetOutcome() const { return outcome_; }
   void SetOutcome(bool val) { outcome_ = val; }
 
  private:
   MockChipsetDriver();
   virtual ~MockChipsetDriver();
-  static bool DoInit(int level, simple::InitChain::ConfigMap const& configMap);
-  static void DoReset(int level, simple::InitChain::ConfigMap const& configMap);
+
+  static bool InitFunc();
+  static bool ResetFunc();
 
   bool outcome_;
 
@@ -50,7 +54,7 @@ class MockChipsetDriver : public example::ChipsetDriver {
 
   // Element of init chain
   //
-  static simple::InitChain::El init_el_;
+  static simple::InitChain::Link init_worker_;
 };
 
 #endif  //  INCLUDE_MOCK_CHIPSET_DRIVER_H_

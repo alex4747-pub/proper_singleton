@@ -28,7 +28,7 @@ bool MockChipsetDriver::init_done_;
 
 // We give it negative initialization level to make sure
 // that it is initialized before the actual drivers
-simple::InitChain::El MockChipsetDriver::init_el_(-1, DoInit, DoReset);
+simple::InitChain::Link MockChipsetDriver::init_worker_(-1, InitFunc, ResetFunc);
 
 bool MockChipsetDriver::SendPacket(uint8_t const*, size_t) {
   std::cout << "MockChipsetDrvier::SendPacket called:"
@@ -40,38 +40,34 @@ MockChipsetDriver::MockChipsetDriver() : outcome_(true) {}
 
 MockChipsetDriver::~MockChipsetDriver() {}
 
-bool MockChipsetDriver::DoInit(int, simple::InitChain::ConfigMap const&) {
-  std::cout << "MockChipsetDrvier::DoInit called\n";
-
+bool MockChipsetDriver::InitFunc() {
   if (InstantiationDone()) {
-    std::cout << "MockChipsetDrvier::DoInit already instantiated\n";
+    std::cout << "MockChipsetDrvier::InitFunc: already instantiated\n";
     return true;
   }
 
-  std::cout << "MockChipsetDrvier::DoInit instantiation\n";
+  std::cout << "MockChipsetDrvier::InitFunc: instantiation\n";
 
-  assert(!init_done_);
+  assert(!MockChipsetDriver::init_done_);
 
   new MockChipsetDriver;
-  init_done_ = true;
+  MockChipsetDriver::init_done_ = true;
 
   return true;
 }
 
-void MockChipsetDriver::DoReset(int, simple::InitChain::ConfigMap const&) {
-  std::cout << "MockChipsetDrvier::DoReset called\n";
-
+bool MockChipsetDriver::ResetFunc() {
   if (!InstantiationDone()) {
-    std::cout << "MockChipsetDrvier::DoReset nothing to do\n";
-    return;
+    std::cout << "MockChipsetDrvier::ResetFunc: nothing to do\n";
+    return true;
   }
 
-  if (!init_done_) {
-    std::cout << "MockChipsetDrvier::DoReset not instantiated by us\n";
-    return;
+  if (!MockChipsetDriver::init_done_) {
+    std::cout << "MockChipsetDrvier::ResetFunc: not instantiated by us\n";
+    return true;
   }
 
-  std::cout << "MockChipsetDrvier::DoReset de-instantiation\n";
+  std::cout << "MockChipsetDrvier::ResetFunc: delete self\n";
 
   // Note: we need a cast here because the base class does not have
   // public destructor, we use dynamic cast to check against
@@ -80,9 +76,9 @@ void MockChipsetDriver::DoReset(int, simple::InitChain::ConfigMap const&) {
   assert(mcd != nullptr);
 
   Clear();
-  init_done_ = false;
+  MockChipsetDriver::init_done_ = false;
 
   delete mcd;
 
-  return;
+  return true;
 }

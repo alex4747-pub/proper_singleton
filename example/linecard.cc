@@ -20,12 +20,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #include <network_driver.h>
-#include <simple_init_chain.h>
+#include <InitChain.h>
 #include <cassert>
 #include <iostream>
 
+// Static permssions: reset is disabled
+bool simple::InitChain::AllowReset() { return false; }
+
+// Runner class
+class LineCardRunner : public simple::InitChain::Runner {
+ public:
+  bool Run() noexcept { return DoRun(); }
+  bool Reset() noexcept { return DoReset(); }
+  bool Release() noexcept { return DoRelease(); }
+};
+
+
 int main(int, char**) {
-  bool res = simple::InitChain::Run();
+  LineCardRunner runner;
+  
+  bool res = runner.Run();
   assert(res);
 
   auto nd = new example::NetworkDriver;
@@ -34,11 +48,13 @@ int main(int, char**) {
 
   std::cout << "Transmit result: " << (res ? "success" : "failure") << "\n";
 
-  std::cout << "========= Performing reset and another run ==========\n";
+  std::cout << "===== Performing reset and another run\n";
+  std::cout << "===== It will be NOP because resets are disabled\n";
 
-  simple::InitChain::Reset();
+  res = runner.Reset();
+  assert(res);
 
-  res = simple::InitChain::Run();
+  res = runner.Run();
   assert(res);
 
   res = nd->Transmit(reinterpret_cast<uint8_t const*>("test-data"), 9);

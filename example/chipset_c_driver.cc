@@ -21,7 +21,7 @@
 //
 
 #include <chipset_driver.h>
-#include <simple_init_chain.h>
+#include <InitChain.h>
 #include <cassert>
 #include <iostream>
 
@@ -39,17 +39,17 @@ class ChipsetCDriver : public example::ChipsetDriver {
   ChipsetCDriver();
   virtual ~ChipsetCDriver();
   static bool IsChipsetPresent();
-  static bool DoInit(int level, simple::InitChain::ConfigMap const& configMap);
-  static void DoReset(int level, simple::InitChain::ConfigMap const& configMap);
+
 
   // In oder to do proper cleanup we have to know that we had installed
   // the concrete daemon
   //
   static bool init_done_;
 
-  // Element of init chain
-  //
-  static simple::InitChain::El init_el_;
+  static bool InitFunc();
+  static bool ResetFunc();
+  
+  static simple::InitChain::Link init_worker_;
 };
 
 bool ChipsetCDriver::init_done_;
@@ -58,7 +58,7 @@ bool ChipsetCDriver::init_done_;
 // for illustration of chipset presence test usage and init_done_
 // check on reset
 //
-simple::InitChain::El ChipsetCDriver::init_el_(110, DoInit, DoReset);
+simple::InitChain::Link ChipsetCDriver::init_worker_(110, InitFunc, ResetFunc);
 
 bool ChipsetCDriver::SendPacket(uint8_t const*, size_t) {
   std::cout << "ChipsetCDrvier::SendPacket called\n";
@@ -74,46 +74,42 @@ bool ChipsetCDriver::IsChipsetPresent() {
   return true;
 }
 
-bool ChipsetCDriver::DoInit(int, simple::InitChain::ConfigMap const&) {
-  std::cout << "ChipsetCDrvier::DoInit called\n";
-
+bool ChipsetCDriver::InitFunc() {
   if (InstantiationDone()) {
-    std::cout << "ChipsetCDrvier::DoInit already instantiated\n";
+    std::cout << "ChipsetCDrvier::InitFunc already: instantiated\n";
     return true;
   }
 
   if (!IsChipsetPresent()) {
-    std::cout << "ChipsetCDrvier::DoInit chipset not-present\n";
+    std::cout << "ChipsetCDrvier::InitFunc: chipset not-present\n";
     return true;
   }
 
-  std::cout << "ChipsetCDrvier::DoInit instantiation\n";
+  std::cout << "ChipsetCDrvier::InitFunc: instantiation\n";
 
-  assert(!init_done_);
+  assert(!ChipsetCDriver::init_done_);
 
   // Note: there is no memory leak here, becaue allocated
   // object is pointed to by self_ and will cleaned up
   // on reset if requiredo
   new ChipsetCDriver;
-  init_done_ = true;  // NOLINT
+  ChipsetCDriver::init_done_ = true;  // NOLINT
 
   return true;
 }
 
-void ChipsetCDriver::DoReset(int, simple::InitChain::ConfigMap const&) {
-  std::cout << "ChipsetCDrvier::DoReset called\n";
-
+bool ChipsetCDriver::ResetFunc() {
   if (!InstantiationDone()) {
-    std::cout << "ChipsetCDrvier::DoReset nothing to do\n";
-    return;
+    std::cout << "ChipsetCDrvier::ResetFunc: nothing to do\n";
+    return true;
   }
 
-  if (!init_done_) {
-    std::cout << "ChipsetCDrvier::DoReset not instantiated by us\n";
-    return;
+  if (!ChipsetCDriver::init_done_) {
+    std::cout << "ChipsetCDrvier::ResetFunc: not instantiated by us\n";
+    return true;
   }
 
-  std::cout << "ChipsetCDrvier::DoReset de-instantiation\n";
+  std::cout << "ChipsetCDrvier::ResetFunc: delete self\n";
 
   // Note: we need a cast here because the base class does not have
   // public destructor, we use dynamic cast to check against
@@ -122,11 +118,11 @@ void ChipsetCDriver::DoReset(int, simple::InitChain::ConfigMap const&) {
   assert(ccd != nullptr);
 
   Clear();
-  init_done_ = false;
+  ChipsetCDriver::init_done_ = false;
 
   delete ccd;
 
-  return;
+  return true;
 }
 
 }  // namespace chipset_c

@@ -1,9 +1,9 @@
 .PHONY: all format tidy cpplint clean run sources
 
 STD=-std=c++11
-CXXFLAGS = -g -O0 -I.
+CXXFLAGS = -g -O0 -I. -I simple_init_chain
 
-USE_GCC=
+USE_GCC = yes
 
 ifeq ($(USE_GCC),)
 CXX = clang++
@@ -28,7 +28,7 @@ SRCS = \
 INCS = \
 	chipset_driver.h \
 	network_driver.h \
-	simple_init_chain.h
+	simple_init_chain/InitChain.h
 
 
 
@@ -50,15 +50,13 @@ cpplint: $(SRCS) $(INCS) Makefile
 	cd unit_test; $(MAKE) cpplint
 	cd ex_unit_test; $(MAKE) cpplint
 
-# We need a local copy of simiple_init_chain.h
-simple_init_chain.h:
+# We need a local copy of simiple_init_chain files
+simple_init_chain/InitChain.h:
 	rm -rf simple_init_chain
-	git -c advice.detachedHead=false clone -b v1.0 https://github.com/alex4747-pub/simple_init_chain.git
-	cp simple_init_chain/simple_init_chain.h .
-	rm -rf simple_init_chain
+	git -c advice.detachedHead=false clone https://github.com/alex4747-pub/simple_init_chain.git
 
 clean:
-	rm -rf linecard *~ *.dSYM simple_init_chain.h simple_init_chain
+	rm -rf linecard *~ *.dSYM simple_init_chain
 	cd unit_test; $(MAKE) clean
 	cd ex_unit_test; $(MAKE) clean
 

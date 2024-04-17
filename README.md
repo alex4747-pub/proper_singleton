@@ -66,17 +66,17 @@ a network driver that uses instantiated singleton send packet.
 A specific singleton is installed depending on the presence of the chipset hardware.
 The chipset-b-driver supports reset operation.
 
+The resets are globally disabled.
+
 ## Unit Test
 
 It is expected that gtest environment is installed.
+
+The resets are globally enabled.
 
 The example/unit-test contains as simple unit test with mock-chipset-driver implemented
 as a singleton with negative initialization level, so it will be instantiated instead of
 real drivers.
 
-## Extended Unit Test
+The mock driver instance will constructed in SetUp and destructed inside TearDown.
 
-It is expected that gtest environment is installed.
-
-The example/unit-test contains two unit case sets each one is using different mock-chipset-driver,
-the specific mock-chipset-driver is selected by the configuration map.

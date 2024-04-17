@@ -3,9 +3,9 @@
 SRC_DIR = ..
 
 STD=-std=c++11
-CXXFLAGS = -g -O0 -I. -I$(SRC_DIR) -pthread
+CXXFLAGS = -g -O0 -I. -I$(SRC_DIR) -I$(SRC_DIR)/simple_init_chain -pthread
 
-USE_GCC=
+USE_GCC = yes
 
 ifeq ($(USE_GCC),)
 CXX = clang++
@@ -34,7 +34,7 @@ SRCS = \
 INCS = \
 	$(SRC_DIR)/chipset_driver.h \
 	$(SRC_DIR)/network_driver.h \
-	$(SRC_DIR)/simple_init_chain.h \
+	$(SRC_DIR)/simple_init_chain/InitChain.h \
 	mock_chipset_driver.h
 
 
