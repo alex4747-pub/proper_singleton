@@ -58,7 +58,6 @@ simple_init_chain/InitChain.h:
 clean:
 	rm -rf linecard *~ *.dSYM simple_init_chain
 	cd unit_test; $(MAKE) clean
-	cd ex_unit_test; $(MAKE) clean
 
 run: linecard
 	./linecard
