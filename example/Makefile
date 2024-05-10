@@ -28,7 +28,7 @@ SRCS = \
 INCS = \
 	chipset_driver.h \
 	network_driver.h \
-	simple_init_chain/InitChain.h
+	simple_init_chain/init_chain.h
 
 
 
@@ -51,7 +51,7 @@ cpplint: $(SRCS) $(INCS) Makefile
 	cd ex_unit_test; $(MAKE) cpplint
 
 # We need a local copy of simiple_init_chain files
-simple_init_chain/InitChain.h:
+simple_init_chain/init_chain.h:
 	rm -rf simple_init_chain
 	git -c advice.detachedHead=false clone https://github.com/alex4747-pub/simple_init_chain.git
 

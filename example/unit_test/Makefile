@@ -34,7 +34,7 @@ SRCS = \
 INCS = \
 	$(SRC_DIR)/chipset_driver.h \
 	$(SRC_DIR)/network_driver.h \
-	$(SRC_DIR)/simple_init_chain/InitChain.h \
+	$(SRC_DIR)/simple_init_chain/init_chain.h \
 	mock_chipset_driver.h
 
 
@@ -55,7 +55,7 @@ $(SRC_DIR)/simple_init_chain.h:
 	cd ..; $(MAKE) sources
 
 clean:
-	rm -rf test_runner *~ *.dSYM test_runner
+	rm -rf test_runner *~ *.dSYM
 
 run: test_runner
 	./test_runner

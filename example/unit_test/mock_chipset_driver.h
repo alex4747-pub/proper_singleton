@@ -26,7 +26,7 @@
 #define INCLUDE_MOCK_CHIPSET_DRIVER_H_
 
 #include <chipset_driver.h>
-#include <InitChain.h>
+#include <init_chain.h>
 #include <map>
 #include <string>
 

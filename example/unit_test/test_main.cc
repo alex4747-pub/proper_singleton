@@ -20,7 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#include <InitChain.h>
+#include <init_chain.h>
 #include <gtest/gtest.h>
 
 // Static permssions

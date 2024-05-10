@@ -21,7 +21,7 @@
 //
 
 #include <chipset_driver.h>
-#include <InitChain.h>
+#include <init_chain.h>
 #include <iostream>
 #include <map>
 #include <string>
